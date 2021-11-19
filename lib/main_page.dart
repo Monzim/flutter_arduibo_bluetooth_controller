@@ -357,43 +357,41 @@ class _MainPage extends State<MainPage> {
           SizedBox(
             height: 200,
             width: 320,
-            child: Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: const Color(0xff775ada),
-                  shadowColor: Colors.purpleAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  elevation: 10,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: const Color(0xff775ada),
+                shadowColor: Colors.purpleAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
                 ),
-                child: Text(
-                  'Tap to\nConnect to Motor\n"HC-05"',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.ubuntuMono(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                onPressed: () async {
-                  final BluetoothDevice? selectedDevice =
-                      await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const SelectBondedDevicePage(
-                            checkAvailability: false);
-                      },
-                    ),
-                  );
-
-                  if (selectedDevice != null) {
-                    print('Connect -> selected ' + selectedDevice.address);
-                    _startChat(context, selectedDevice);
-                  } else {
-                    print('Connect -> no device selected');
-                  }
-                },
+                elevation: 10,
               ),
+              child: Text(
+                'Tap to\nConnect to Motor\n"HC-05"',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ubuntuMono(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () async {
+                final BluetoothDevice? selectedDevice =
+                    await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return const SelectBondedDevicePage(
+                          checkAvailability: false);
+                    },
+                  ),
+                );
+
+                if (selectedDevice != null) {
+                  print('Connect -> selected ' + selectedDevice.address);
+                  _startChat(context, selectedDevice);
+                } else {
+                  print('Connect -> no device selected');
+                }
+              },
             ),
           ),
           Column(
