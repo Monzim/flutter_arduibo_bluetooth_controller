@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
-import './BackgroundCollectingTask.dart';
-import './helpers/LineChart.dart';
-import './helpers/PaintStyle.dart';
+import 'background_collecting_task.dart';
+import 'helpers/line_chart.dart';
+import 'helpers/paint_style.dart';
 
 class BackgroundCollectedPage extends StatelessWidget {
+  const BackgroundCollectedPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final BackgroundCollectingTask task =
         BackgroundCollectingTask.of(context, rebuildOnChange: true);
 
-    // Arguments shift is needed for timestamps as miliseconds in double could loose precision.
+    // Arguments shift is needed for timestamps as milliseconds in double could loose precision.
     final int argumentsShift =
         task.samples.first.timestamp.millisecondsSinceEpoch;
 
-    final Duration showDuration =
-        Duration(hours: 2); // @TODO . show duration should be configurable
+    Duration showDuration = const Duration(
+        hours: 2); // @TODO . show duration should be configurable
     final Iterable<DataSample> lastSamples = task.getLastOf(showDuration);
 
     final Iterable<double> arguments = lastSamples.map((sample) {
@@ -24,8 +26,8 @@ class BackgroundCollectedPage extends StatelessWidget {
     });
 
     // Step for argument labels
-    final Duration argumentsStep =
-        Duration(minutes: 15); // @TODO . step duration should be configurable
+    Duration argumentsStep = const Duration(
+        minutes: 15); // @TODO . step duration should be configurable
 
     // Find first timestamp floored to step before
     final DateTime beginningArguments = lastSamples.first.timestamp;
@@ -61,14 +63,14 @@ class BackgroundCollectedPage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Collected data'),
+          title: const Text('Collected data'),
           actions: <Widget>[
             // Progress circle
             (task.inProgress
                 ? FittedBox(
                     child: Container(
-                        margin: new EdgeInsets.all(16.0),
-                        child: CircularProgressIndicator(
+                        margin: const EdgeInsets.all(16.0),
+                        child: const CircularProgressIndicator(
                             valueColor:
                                 AlwaysStoppedAnimation<Color>(Colors.white))))
                 : Container(/* Dummy */)),

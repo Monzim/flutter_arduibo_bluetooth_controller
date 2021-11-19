@@ -12,7 +12,7 @@ class ChatPage extends StatefulWidget {
   const ChatPage({required this.server});
 
   @override
-  _ChatPage createState() => new _ChatPage();
+  _ChatPage createState() => _ChatPage();
 }
 
 class _Message {
@@ -23,15 +23,14 @@ class _Message {
 }
 
 class _ChatPage extends State<ChatPage> {
-  static final clientID = 0;
+  static const clientID = 0;
   BluetoothConnection? connection;
 
   List<_Message> messages = List<_Message>.empty(growable: true);
   String _messageBuffer = '';
 
-  final TextEditingController textEditingController =
-      new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
+  final TextEditingController textEditingController = TextEditingController();
+  final ScrollController listScrollController = ScrollController();
 
   bool isConnecting = true;
   bool get isConnected => (connection?.isConnected ?? false);
@@ -64,12 +63,12 @@ class _ChatPage extends State<ChatPage> {
         } else {
           print('Disconnected remotely!');
         }
-        if (this.mounted) {
+        if (mounted) {
           setState(() {});
         }
       });
     }).catchError((error) {
-      print('Cannot connect, exception occured');
+      print('Cannot connect, exception occurred');
       print(error);
     });
   }
@@ -97,8 +96,8 @@ class _ChatPage extends State<ChatPage> {
                   return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
                 }(_message.text.trim()),
                 style: GoogleFonts.ubuntuMono(color: Colors.white)),
-            padding: EdgeInsets.all(12.0),
-            margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
+            padding: const EdgeInsets.all(12.0),
+            margin: const EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
             width: 222.0,
             decoration: BoxDecoration(
                 color: _message.whom == clientID
@@ -116,6 +115,7 @@ class _ChatPage extends State<ChatPage> {
     final serverName = widget.server.name ?? "Unknown";
     return Scaffold(
       appBar: AppBar(
+          toolbarHeight: 100,
           backgroundColor: Colors.black,
           elevation: 0,
           actions: [
@@ -135,13 +135,22 @@ class _ChatPage extends State<ChatPage> {
             // )
           ],
           title: (isConnecting
-              ? Text('Connecting chat to ' + serverName + '...')
+              ? Text(
+                  'Connecting chat to ' + serverName + '...',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.ubuntu(),
+                )
               : isConnected
                   ? Text(
-                      'Live with motor ' + serverName,
-                      style: GoogleFonts.ubuntu(),
+                      'Connected with Motor\n' + serverName,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.ubuntu(fontWeight: FontWeight.bold),
                     )
-                  : Text('Chat log with ' + serverName))),
+                  : Text(
+                      'Chat log with ' + serverName,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.ubuntu(),
+                    ))),
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -295,7 +304,7 @@ class _ChatPage extends State<ChatPage> {
       }
     }
 
-    // Create message if there is new line character
+    // Create message if there is  line character
     String dataString = String.fromCharCodes(buffer);
     int index = buffer.indexOf(13);
     if (~index != 0) {

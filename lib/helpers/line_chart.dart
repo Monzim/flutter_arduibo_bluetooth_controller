@@ -8,7 +8,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import './PaintStyle.dart';
+import 'paint_style.dart';
 
 class LabelEntry {
   final double value;
