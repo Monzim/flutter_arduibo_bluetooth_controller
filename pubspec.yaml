@@ -1,5 +1,5 @@
 name: flutter_arduino_blue
-version: 1.0.0+1
+version: 1.5.0+1
 publish_to: none
 description: A Bluetooth Controller App Arduino and HC-05.
 environment:

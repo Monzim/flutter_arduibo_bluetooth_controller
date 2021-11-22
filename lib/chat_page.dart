@@ -38,6 +38,9 @@ class _ChatPage extends State<ChatPage> {
   bool isDisconnecting = false;
 
   bool isMotorOn = false;
+  bool isLightOn = false;
+
+  late Timer timer;
 
   @override
   void initState() {
@@ -71,6 +74,41 @@ class _ChatPage extends State<ChatPage> {
       print('Cannot connect, exception occurred');
       print(error);
     });
+  }
+
+  Duration timerInterval = const Duration(seconds: 1);
+  int timerCount = 0;
+
+  void stopTimer() {
+    timer.cancel();
+    timerCount = 0;
+  }
+
+  void tick(_) {
+    setState(() {
+      timerCount++;
+      // timerCount = timerCount + 20;
+    });
+    print(timerCount);
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(timerInterval, tick);
+  }
+
+  String getTimeText() {
+    String getParsedTime(String time) {
+      if (time.length <= 1) return "0$time";
+      return time;
+    }
+
+    int min = timerCount ~/ 60;
+    int sec = timerCount % 60;
+
+    String parsedTime =
+        getParsedTime(min.toString()) + " : " + getParsedTime(sec.toString());
+
+    return parsedTime;
   }
 
   @override
@@ -176,7 +214,7 @@ class _ChatPage extends State<ChatPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(width: 10, height: 10),
+                  const SizedBox(width: 10, height: 10),
                   ClipOval(
                       child: Container(
                     width: 25,
@@ -187,56 +225,122 @@ class _ChatPage extends State<ChatPage> {
               ),
             ),
             Flexible(
-              flex: 1,
+              flex: 4,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: SizedBox(
-                        height: 200,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: isMotorOn == true
-                                  ? Colors.green
-                                  : Colors.green,
-                            ),
-                            onPressed: isConnected && isMotorOn != true
-                                ? () => _sendMessage('1')
-                                : null,
-                            child: Text(
-                              'On',
-                              style: GoogleFonts.ubuntu(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
-                      ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: SizedBox(
+                            height: 200,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: isMotorOn == true
+                                      ? Colors.red
+                                      : Colors.green,
+                                ),
+                                onPressed: isConnected && isMotorOn != true
+                                    ? () => _sendMessage('1')
+                                    : () => _sendMessage('0'),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      isMotorOn == true
+                                          // ? 'Off\nRunning Time: $timerCount sec'
+                                          ? 'off'
+                                          : 'On',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.ubuntu(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10, height: 10),
+                                    isMotorOn == true
+                                        ? Text(
+                                            getTimeText(),
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.ubuntu(
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                )),
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 10, height: 10),
+                    const SizedBox(width: 10, height: 10),
                     Expanded(
                       flex: 1,
-                      child: SizedBox(
-                        height: 200,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: isMotorOn == true
-                                  ? Colors.red
-                                  : Colors.red[900],
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(7.0),
+                          color: Colors.grey[200],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 200,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: isLightOn == true
+                                        ? Colors.red
+                                        : Colors.green,
+                                  ),
+                                  onPressed: isConnected && isLightOn != true
+                                      ? () => _sendMessage('2')
+                                      : () => _sendMessage('3'),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        isLightOn == true
+                                            // ? 'Off\nRunning Time: $timerCount sec'
+                                            ? 'Light off'
+                                            : 'Light On',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.ubuntu(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
                             ),
-                            onPressed: isConnected && isMotorOn == true
-                                ? () => _sendMessage('0')
-                                : null,
-                            child: Text(
-                              'Off',
-                              style: GoogleFonts.ubuntu(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
+                            Icon(
+                              isLightOn != true
+                                  ? Icons.lightbulb_outline
+                                  : Icons.lightbulb,
+                              size: 70,
+                              color: isLightOn == true
+                                  ? Colors.pink
+                                  : Colors.white,
+                            ),
+                            // Text(
+                            //   isLightOn == true
+                            //       ? 'Light\nCurrently\nOn'
+                            //       : 'Light\nCurrently\nOff',
+                            //   textAlign: TextAlign.center,
+                            //   style: GoogleFonts.ubuntu(
+                            //     fontSize: 26,
+                            //     fontWeight: FontWeight.bold,
+                            //   ),
+                            // ),
+                            const SizedBox(width: 10, height: 10),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -281,23 +385,23 @@ class _ChatPage extends State<ChatPage> {
 
   void _onDataReceived(Uint8List data) {
     // Allocate buffer for parsed data
-    int backspacesCounter = 0;
+    int timerCacktcesCounter = 0;
     data.forEach((byte) {
       if (byte == 8 || byte == 127) {
-        backspacesCounter++;
+        timerCacktcesCounter++;
       }
     });
-    Uint8List buffer = Uint8List(data.length - backspacesCounter);
+    Uint8List buffer = Uint8List(data.length - timerCacktcesCounter);
     int bufferIndex = buffer.length;
 
     // Apply backspace control character
-    backspacesCounter = 0;
+    timerCacktcesCounter = 0;
     for (int i = data.length - 1; i >= 0; i--) {
       if (data[i] == 8 || data[i] == 127) {
-        backspacesCounter++;
+        timerCacktcesCounter++;
       } else {
-        if (backspacesCounter > 0) {
-          backspacesCounter--;
+        if (timerCacktcesCounter > 0) {
+          timerCacktcesCounter--;
         } else {
           buffer[--bufferIndex] = data[i];
         }
@@ -312,18 +416,18 @@ class _ChatPage extends State<ChatPage> {
         messages.add(
           _Message(
             1,
-            backspacesCounter > 0
+            timerCacktcesCounter > 0
                 ? _messageBuffer.substring(
-                    0, _messageBuffer.length - backspacesCounter)
+                    0, _messageBuffer.length - timerCacktcesCounter)
                 : _messageBuffer + dataString.substring(0, index),
           ),
         );
         _messageBuffer = dataString.substring(index);
       });
     } else {
-      _messageBuffer = (backspacesCounter > 0
+      _messageBuffer = (timerCacktcesCounter > 0
           ? _messageBuffer.substring(
-              0, _messageBuffer.length - backspacesCounter)
+              0, _messageBuffer.length - timerCacktcesCounter)
           : _messageBuffer + dataString);
     }
   }
@@ -332,7 +436,7 @@ class _ChatPage extends State<ChatPage> {
     text = text.trim();
     textEditingController.clear();
 
-    if (text.length > 0) {
+    if (text.isNotEmpty) {
       try {
         connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
         await connection!.output.allSent;
@@ -341,15 +445,21 @@ class _ChatPage extends State<ChatPage> {
           messages.add(_Message(clientID, text));
           if (text == '1') {
             isMotorOn = true;
+            startTimer();
           } else if (text == '0') {
             isMotorOn = false;
+            stopTimer();
+          } else if (text == '2') {
+            isLightOn = true;
+          } else if (text == '3') {
+            isLightOn = false;
           }
         });
 
-        Future.delayed(Duration(milliseconds: 333)).then((_) {
+        Future.delayed(const Duration(milliseconds: 333)).then((_) {
           listScrollController.animateTo(
               listScrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 333),
+              duration: const Duration(milliseconds: 333),
               curve: Curves.easeOut);
         });
       } catch (e) {
